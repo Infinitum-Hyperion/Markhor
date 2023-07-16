@@ -1,4 +1,4 @@
-import 'package:thp_markhor/thp_markhor.dart';
+import 'package:thp_markhor/markhor.dart';
 
 void main() {
   var awesome = Awesome();

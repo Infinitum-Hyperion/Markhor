@@ -3,6 +3,6 @@
 /// More dartdocs go here.
 library;
 
-export 'src/thp_markhor_base.dart';
+export 'src/markhor.dart';
 
 // TODO: Export any libraries intended for clients of this package.
