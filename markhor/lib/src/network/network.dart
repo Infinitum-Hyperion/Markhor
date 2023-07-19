@@ -1,5 +1,21 @@
 part of markhor;
 
+class EndpointEmulator {
+  final String endpointUrl;
+
+  const EndpointEmulator({
+    required this.endpointUrl,
+  });
+}
+
+abstract class APIEmulator {
+  final List<EndpointEmulator> endpoints;
+
+  const APIEmulator({
+    required this.endpoints,
+  });
+}
+
 class HttpRequestConfigs {
   final Duration? delay;
   final Function? failureFunction;
