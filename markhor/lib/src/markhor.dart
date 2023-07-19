@@ -1,6 +1,7 @@
-// TODO: Put public facing types in this file.
+library markhor;
 
-/// Checks if you are awesome. Spoiler: you are.
-class Awesome {
-  bool get isAwesome => true;
-}
+import 'dart:async';
+
+part './network/network.dart';
+
+abstract class Service {}
