@@ -1,31 +1,41 @@
 part of markhor;
 
-class MethodInvocationObserver<R> {
-  final Map<DateTime, MethodInvocationReport> report = {};
+class MethodInvocationObserver<T> extends Publisher<MethodInvocationReport> {
   final Stopwatch stopwatch = Stopwatch();
 
   MethodInvocationObserver();
 
-  R call(R Function() subject) {
+  T call(T Function() subject) {
+    // Start tracking
     stopwatch.start();
-    final R returnValue = subject();
+    final T returnValue = subject();
     stopwatch.stop();
-    report.addAll({
-      DateTime.now(): MethodInvocationReport(
+
+    // Log, and take measurements
+    publishReport(
+      MethodInvocationReport(
         executionDuration: Duration(
           milliseconds: stopwatch.elapsedMilliseconds,
         ),
-      )
-    });
+      ),
+    );
+
+    // Reset variables
     stopwatch.reset();
     return returnValue;
   }
+
+  @override
+  String toString() => 'MethodInvocationObserver';
 }
 
-class MethodInvocationReport {
+class MethodInvocationReport extends Report {
   final Duration executionDuration;
 
-  const MethodInvocationReport({
+  MethodInvocationReport({
     required this.executionDuration,
   });
+
+  @override
+  String toString() => "${executionDuration.inMilliseconds}ms";
 }
