@@ -1,19 +1,20 @@
 part of markhor;
 
 class Observatory {
-  final Map<Publisher, List<Report>> repository = {};
+  late final MarkhorWorkstation workstation;
+  final Map<WorkstationComponent, List<Report>> repository = {};
 
-  void attachPublisherFor<R extends Report>(Publisher<R> publisher) {
-    repository.addAll({publisher: <R>[]});
+  void attachPublisherFor<R extends Report>(WorkstationComponent component) {
+    repository.addAll({component: []});
     // can call updateConsole in the future when there IS a console
-    publisher.stream.listen((R report) => repository[publisher]!.add(report));
+    // component.stream.listen((R report) => repository[publisher]!.add(report));
   }
 
   void dump() {
-    for (Publisher publisher in repository.keys) {
-      print('\n\nPUB: $publisher');
+    for (WorkstationComponent component in repository.keys) {
+      print('\n\nPUB: $component');
       print(
-        repository[publisher]!
+        repository[component]!
             .map((Report r) => "  ${r.timestamp.toIso8601String()} | $r")
             .toList()
             .join('\n'),
@@ -22,14 +23,13 @@ class Observatory {
   }
 }
 
-abstract class Publisher<R extends Report> {
-  final StreamController<R> _streamController = StreamController.broadcast();
-  late final Stream<R> stream = _streamController.stream;
-
-  void publishReport(R report) => _streamController.add(report);
-}
-
 abstract class Report {
   final DateTime timestamp = DateTime.now();
   Report();
+}
+
+mixin Publishing<R extends Report> on WorkstationComponent {
+  final StreamController<R> _streamController = StreamController.broadcast();
+  late final Stream<R> stream = _streamController.stream;
+  void publishReport(R report) => _streamController.add(report);
 }

@@ -1,9 +1,8 @@
 part of markhor;
 
-class MethodInvocationObserver<T> extends Publisher<MethodInvocationReport> {
+class MethodInvocationObserver<T> extends WorkstationNode
+    with Publishing<MethodInvocationReport> {
   final Stopwatch stopwatch = Stopwatch();
-
-  MethodInvocationObserver();
 
   T call(T Function() subject) {
     // Start tracking

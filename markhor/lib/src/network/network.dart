@@ -1,32 +1,6 @@
 part of markhor;
 
-class EndpointEmulator {
-  final String endpointUrl;
-
-  const EndpointEmulator({
-    required this.endpointUrl,
-  });
-}
-
-abstract class APIEmulator {
-  final List<EndpointEmulator> endpoints;
-
-  const APIEmulator({
-    required this.endpoints,
-  });
-}
-
-class HttpRequestConfigs {
-  final Duration? delay;
-  final Function? failureFunction;
-
-  const HttpRequestConfigs({
-    this.delay,
-    this.failureFunction,
-  });
-}
-
-class Network extends Service {
+class Network extends WorkstationAgent {
   Future<T> httpRequest<T>(
     FutureOr<T> Function() fn, {
     HttpRequestConfigs? configs,
@@ -47,4 +21,14 @@ class Network extends Service {
       return fn();
     }
   }
+}
+
+class HttpRequestConfigs {
+  final Duration? delay;
+  final Function? failureFunction;
+
+  const HttpRequestConfigs({
+    this.delay,
+    this.failureFunction,
+  });
 }
