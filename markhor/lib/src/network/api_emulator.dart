@@ -3,15 +3,17 @@ part of markhor;
 abstract class APIEmulator extends WorkstationAgent
     with Publishing<APIEmulatorReport> {
   late final HttpServer _httpServer;
+
   APIEmulator({
     int port = 42069,
+    required super.workstation,
   }) {
-    workstation?._asyncInitialisations.add(initServer(port));
+    workstation._asyncInitialisations.add(initServer(port));
   }
 
   String get urlAddress => _httpServer.address.toString();
 
-  Future<void> initServer([int port = 42069]) async {
+  Future<void> initServer([int port = 42001]) async {
     _httpServer = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
     _httpServer.listen((HttpRequest request) async {
       final HttpResponse response = handleRequest(request);

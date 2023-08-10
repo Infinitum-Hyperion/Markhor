@@ -4,6 +4,10 @@ class MethodInvocationObserver<T> extends WorkstationNode
     with Publishing<MethodInvocationReport> {
   final Stopwatch stopwatch = Stopwatch();
 
+  MethodInvocationObserver({
+    required super.workstation,
+  });
+
   T call(T Function() subject) {
     // Start tracking
     stopwatch.start();

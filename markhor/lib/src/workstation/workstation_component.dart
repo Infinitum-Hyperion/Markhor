@@ -1,7 +1,9 @@
 part of markhor;
 
 abstract class WorkstationComponent {
-  late final MarkhorWorkstation? workstation;
+  final MarkhorWorkstation workstation;
 
-  WorkstationComponent();
+  const WorkstationComponent({
+    required this.workstation,
+  });
 }

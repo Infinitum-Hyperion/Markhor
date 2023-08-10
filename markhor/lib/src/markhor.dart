@@ -1,9 +1,8 @@
 library markhor;
 
 import 'dart:async';
+import 'dart:html_common';
 import 'dart:io';
-
-import 'package:thp_markhor/markhor.dart';
 
 part './workstation/workstation.dart';
 part './workstation/workstation_component.dart';

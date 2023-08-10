@@ -1,8 +1,12 @@
 part of markhor;
 
 class Observatory {
-  late final MarkhorWorkstation workstation;
+  final MarkhorWorkstation workstation;
   final Map<WorkstationComponent, List<Report>> repository = {};
+
+  Observatory({
+    required this.workstation,
+  });
 
   void attachPublisherFor<R extends Report>(WorkstationComponent component) {
     repository.addAll({component: []});

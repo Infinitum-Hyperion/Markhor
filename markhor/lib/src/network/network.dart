@@ -1,6 +1,10 @@
 part of markhor;
 
 class Network extends WorkstationAgent {
+  const Network({
+    required super.workstation,
+  });
+
   Future<T> httpRequest<T>(
     FutureOr<T> Function() fn, {
     HttpRequestConfigs? configs,
