@@ -8,7 +8,7 @@ abstract class APIEmulator extends WorkstationAgent
     int port = 42069,
     required super.workstation,
   }) {
-    workstation._asyncInitialisations.add(initServer(port));
+    workstation.asyncInitialisations.add(initServer(port));
   }
 
   String get urlAddress => _httpServer.address.toString();
