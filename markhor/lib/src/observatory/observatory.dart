@@ -38,3 +38,7 @@ mixin Publishing<R extends Report> on WorkstationComponent {
   late final Stream<R> stream = _streamController.stream;
   void publishReport(R report) => _streamController.add(report);
 }
+
+/// A [SystemParameter] is a paramter that is tracked by the system to ensure
+/// compliance.
+class SystemParameter {}
