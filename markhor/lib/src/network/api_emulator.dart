@@ -7,7 +7,8 @@ abstract class APIEmulator extends WorkstationAgent
   APIEmulator({
     int port = 42069,
     required super.workstation,
-  }) {
+    required String componentId,
+  }) : super(componentId: 'api_eml.$componentId') {
     workstation.asyncInitialisations.add(initServer(port));
   }
 

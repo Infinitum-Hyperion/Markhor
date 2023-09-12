@@ -1,7 +1,8 @@
 part of markhor;
 
+/// The Markhor [Observatory] provides telemetry tracking services
 class Observatory {
-  final MarkhorWorkstation workstation;
+  final AutocloudWorkstation workstation;
   final Map<WorkstationComponent, List<Report>> repository = {};
 
   Observatory({

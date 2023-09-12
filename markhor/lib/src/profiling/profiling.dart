@@ -6,7 +6,8 @@ class MethodInvocationObserver<T> extends WorkstationNode
 
   MethodInvocationObserver({
     required super.workstation,
-  });
+    required String componentId,
+  }) : super(componentId: 'meth_inv_obs.$componentId');
 
   T call(T Function() subject) {
     // Start tracking
