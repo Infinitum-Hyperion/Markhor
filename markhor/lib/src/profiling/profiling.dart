@@ -1,13 +1,9 @@
 part of markhor;
 
-class MethodInvocationObserver<T> extends WorkstationNode
-    with Publishing<MethodInvocationReport> {
+class MethodInvocationObserver<T> with Publishing<MethodInvocationReport> {
   final Stopwatch stopwatch = Stopwatch();
 
-  MethodInvocationObserver({
-    required super.workstation,
-    required String componentId,
-  }) : super(componentId: 'meth_inv_obs.$componentId');
+  MethodInvocationObserver();
 
   T call(T Function() subject) {
     // Start tracking
