@@ -1,10 +1,7 @@
 part of markhor;
 
-class Network extends WorkstationAgent {
-  const Network({
-    required super.workstation,
-    required String componentId,
-  }) : super(componentId: 'network.$componentId');
+class Network {
+  const Network();
 
   Future<T> httpRequest<T>(
     FutureOr<T> Function() fn, {

@@ -1,16 +1,9 @@
 part of markhor;
 
-abstract class APIEmulator extends WorkstationAgent
-    with Publishing<APIEmulatorReport> {
+abstract class APIEmulator with Publishing<APIEmulatorReport> {
   late final HttpServer _httpServer;
 
-  APIEmulator({
-    int port = 42069,
-    required super.workstation,
-    required String componentId,
-  }) : super(componentId: 'api_eml.$componentId') {
-    workstation.asyncInitialisations.add(initServer(port));
-  }
+  APIEmulator();
 
   String get urlAddress => _httpServer.address.toString();
 
