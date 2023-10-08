@@ -1,9 +1,16 @@
 part of markhor;
 
-abstract class APIEmulator with Publishing<APIEmulatorReport> {
+abstract class APIEmulator extends AutonomicElement {
+  final Observatory? observatory;
+  final TelemetryChannel? channel;
   late final HttpServer _httpServer;
 
-  APIEmulator();
+  APIEmulator({
+    this.observatory,
+    this.channel,
+    required super.elementId,
+    required super.systemId,
+  });
 
   String get urlAddress => _httpServer.address.toString();
 
@@ -11,7 +18,16 @@ abstract class APIEmulator with Publishing<APIEmulatorReport> {
     _httpServer = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
     _httpServer.listen((HttpRequest request) async {
       final HttpResponse response = handleRequest(request);
-      publishReport(APIEmulatorReport(request: request, response: response));
+      if (observatory != null && channel != null) {
+        observatory!.datahouse.publishTo(
+          channel: channel!,
+          item: TelemetryItem(
+            systemId: systemId,
+            payload: APIEmulatorReport(request: request, response: response),
+          ),
+        );
+      }
+      (APIEmulatorReport(request: request, response: response));
       await response.close();
     });
   }
@@ -19,7 +35,7 @@ abstract class APIEmulator with Publishing<APIEmulatorReport> {
   HttpResponse handleRequest(HttpRequest request);
 }
 
-class APIEmulatorReport extends Report {
+class APIEmulatorReport extends StorableJson {
   final HttpRequest request;
   final HttpResponse response;
 
@@ -27,4 +43,10 @@ class APIEmulatorReport extends Report {
     required this.request,
     required this.response,
   });
+
+  @override
+  Map<String, Object?> toJson() => {
+        'request': request.uri.toString(),
+        'response': response.statusCode,
+      };
 }
