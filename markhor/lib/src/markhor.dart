@@ -13,7 +13,5 @@ part './observatory/observatory.dart';
 part './observatory/context_monitor.dart';
 part './observatory/log_monitor.dart';
 
-part './objectives/objectives.dart';
-
 part './datahouse/datahouse.dart';
 part './datahouse/telemetry_channel.dart';

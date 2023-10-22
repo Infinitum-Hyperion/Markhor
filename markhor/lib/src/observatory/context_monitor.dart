@@ -9,7 +9,7 @@ class ContextMonitor {
   void logSpan(ExecutionSpan span) => executionSpans.add(span);
 }
 
-class ExecutionSpan implements Storable {
+class ExecutionSpan with Storable<JSON> {
   final AutonomicCell cell;
   final DateTime startTime;
   late final DateTime endTime;
@@ -21,9 +21,9 @@ class ExecutionSpan implements Storable {
   Duration get duration => endTime.difference(startTime);
 
   @override
-  Object? toStorable() => {
-        'startTime': startTime.toIso8601String(),
-        'endTime': endTime.toIso8601String(),
-        'duration': duration.inMilliseconds,
+  JSON serialize() => {
+        'startTime': startTime.serialize(),
+        'endTime': endTime.serialize(),
+        'duration': duration.serialize(),
       };
 }

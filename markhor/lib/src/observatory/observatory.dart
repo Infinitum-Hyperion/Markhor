@@ -12,7 +12,3 @@ class Observatory {
     required this.logMonitor,
   });
 }
-
-/// A [SystemParameter] is a paramter that is tracked by the system to ensure
-/// compliance.
-class SystemParameter {}

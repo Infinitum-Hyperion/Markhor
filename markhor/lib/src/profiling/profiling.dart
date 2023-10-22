@@ -24,10 +24,10 @@ class MethodInvocationObserver<T> extends AutonomicElement {
       item: TelemetryItem(
         systemId: systemId,
         payload: MethodInvocationReport(
-          executionDuration: DurationStorable(Duration(
+          executionDuration: Duration(
             milliseconds: stopwatch.elapsedMilliseconds,
-          )),
-        ),
+          ),
+        ).serialize(),
       ),
     );
 
@@ -40,18 +40,18 @@ class MethodInvocationObserver<T> extends AutonomicElement {
   String toString() => 'MethodInvocationObserver';
 }
 
-class MethodInvocationReport extends StorableJson {
-  final DurationStorable executionDuration;
+class MethodInvocationReport with Storable<JSON> {
+  final Duration executionDuration;
 
   MethodInvocationReport({
     required this.executionDuration,
   });
 
   @override
-  String toString() => "${executionDuration.toStorable()}ms";
+  String toString() => "${executionDuration.serialize()}ms";
 
   @override
-  Map<String, Object?> toJson() => {
-        'executionDuration': executionDuration.toStorable(),
+  JSON serialize() => {
+        'executionDuration': executionDuration.serialize(),
       };
 }

@@ -3,12 +3,12 @@ part of markhor;
 class Datahouse {
   final Map<TelemetryChannel, List<ChannelListener>> registry = {};
 
-  void addChannel<S extends StorableJson>({
+  void addChannel<S extends Storable<JSON>>({
     required TelemetryChannel<S> channel,
   }) =>
       registry[channel] = [];
 
-  void addListener<S extends StorableJson>({
+  void addListener<S extends Storable<JSON>>({
     required TelemetryChannel<S> channel,
     required ChannelListener<S> listener,
   }) {
@@ -19,9 +19,9 @@ class Datahouse {
     }
   }
 
-  void publishTo<S extends StorableJson>({
+  void publishTo<S extends Storable<JSON>>({
     required TelemetryChannel<S> channel,
-    required TelemetryItem<S> item,
+    required TelemetryItem item,
   }) {
     if (registry.containsKey(channel)) {
       channel.items.add(item);
@@ -34,8 +34,8 @@ class Datahouse {
   }
 }
 
-class ChannelListener<S extends StorableJson> {
-  final void Function(TelemetryItem<S>) notifier;
+class ChannelListener<S extends Storable<JSON>> {
+  final void Function(TelemetryItem) notifier;
 
   const ChannelListener({
     required this.notifier,

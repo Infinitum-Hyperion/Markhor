@@ -23,7 +23,8 @@ abstract class APIEmulator extends AutonomicElement {
           channel: channel!,
           item: TelemetryItem(
             systemId: systemId,
-            payload: APIEmulatorReport(request: request, response: response),
+            payload: APIEmulatorReport(request: request, response: response)
+                .serialize(),
           ),
         );
       }
@@ -35,17 +36,17 @@ abstract class APIEmulator extends AutonomicElement {
   HttpResponse handleRequest(HttpRequest request);
 }
 
-class APIEmulatorReport extends StorableJson {
+class APIEmulatorReport with Storable<JSON> {
   final HttpRequest request;
   final HttpResponse response;
 
-  APIEmulatorReport({
+  const APIEmulatorReport({
     required this.request,
     required this.response,
   });
 
   @override
-  Map<String, Object?> toJson() => {
+  JSON serialize() => {
         'request': request.uri.toString(),
         'response': response.statusCode,
       };
