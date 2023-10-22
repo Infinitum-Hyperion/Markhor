@@ -21,13 +21,13 @@ class MethodInvocationObserver<T> extends AutonomicElement {
     // Log, and take measurements
     observatory.datahouse.publishTo(
       channel: channel,
-      item: TelemetryItem(
+      item: TelemetryItem<MethodInvocationReport>(
         systemId: systemId,
         payload: MethodInvocationReport(
           executionDuration: Duration(
             milliseconds: stopwatch.elapsedMilliseconds,
           ),
-        ).serialize(),
+        ),
       ),
     );
 

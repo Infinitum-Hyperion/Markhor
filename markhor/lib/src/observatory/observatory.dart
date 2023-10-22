@@ -6,7 +6,7 @@ class Observatory {
   final ContextMonitor contextMonitor;
   final LogMonitor logMonitor;
 
-  Observatory({
+  const Observatory({
     required this.datahouse,
     required this.contextMonitor,
     required this.logMonitor,

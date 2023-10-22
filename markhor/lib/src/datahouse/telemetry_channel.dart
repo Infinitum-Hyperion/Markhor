@@ -2,16 +2,16 @@ part of markhor;
 
 class TelemetryChannel<S extends Storable<JSON>> {
   final String systemId;
-  final List<TelemetryItem> items = [];
+  final List<TelemetryItem<S>> items = [];
 
   TelemetryChannel({
     required this.systemId,
   });
 }
 
-class TelemetryItem with Storable<JSON> {
+class TelemetryItem<S extends Storable<JSON>> with Storable<JSON> {
   final String systemId;
-  final JSON payload;
+  final S payload;
   final DateTime dateTime;
 
   TelemetryItem({
@@ -19,18 +19,10 @@ class TelemetryItem with Storable<JSON> {
     required this.payload,
   }) : dateTime = DateTime.now();
 
-  factory TelemetryItem.fromStorable(Object? storable) {
-    final JSON json = storable as JSON;
-    return TelemetryItem(
-      systemId: json.get<String>('systemId'),
-      payload: json.get<JSON>('payload'),
-    );
-  }
-
   @override
   JSON serialize() => {
         'systemId': systemId,
         'timestamp': dateTime.serialize(),
-        'payload': payload,
+        'payload': payload.serialize(),
       };
 }

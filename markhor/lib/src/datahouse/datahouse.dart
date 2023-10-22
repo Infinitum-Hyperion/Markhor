@@ -21,7 +21,7 @@ class Datahouse {
 
   void publishTo<S extends Storable<JSON>>({
     required TelemetryChannel<S> channel,
-    required TelemetryItem item,
+    required TelemetryItem<S> item,
   }) {
     if (registry.containsKey(channel)) {
       channel.items.add(item);
@@ -35,7 +35,7 @@ class Datahouse {
 }
 
 class ChannelListener<S extends Storable<JSON>> {
-  final void Function(TelemetryItem) notifier;
+  final void Function(TelemetryItem<S>) notifier;
 
   const ChannelListener({
     required this.notifier,

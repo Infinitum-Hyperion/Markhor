@@ -21,10 +21,9 @@ abstract class APIEmulator extends AutonomicElement {
       if (observatory != null && channel != null) {
         observatory!.datahouse.publishTo(
           channel: channel!,
-          item: TelemetryItem(
+          item: TelemetryItem<APIEmulatorReport>(
             systemId: systemId,
-            payload: APIEmulatorReport(request: request, response: response)
-                .serialize(),
+            payload: APIEmulatorReport(request: request, response: response),
           ),
         );
       }
