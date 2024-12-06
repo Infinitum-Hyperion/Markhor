@@ -1,2 +1,4 @@
 .DS_Store
 .metadata
+markhor_sdk/python_3_9/telemetry/__pycache__
+markhor_sdk/python_3_9/venv
