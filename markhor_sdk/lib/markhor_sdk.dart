@@ -1,10 +1,6 @@
 library markhor.sdk;
 
-import 'dart:convert';
-import 'dart:io';
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/status.dart' as WSStatus;
 
-part './communication/lightweight_communication_bridge.dart';
-
-void main(List<String> args) {
-  LightweightCommunicationBridge()..initServer();
-}
+part './telemetry/lcb_client.dart';
