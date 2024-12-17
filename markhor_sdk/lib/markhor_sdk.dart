@@ -1,5 +1,7 @@
 library markhor.sdk;
 
+import 'dart:convert';
+
 import 'package:autocloud_sdk/autocloud_sdk.dart';
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/status.dart' as WSStatus;

@@ -7,32 +7,75 @@ part of markhor.sdk;
 /// instances directly. Instead, use the [AutocloudProject.createReplayBuffer] method.
 class ReplayBuffer<T> {
   final String id;
-  final KeyValueDBProvider dbProvider;
+  final KeyValueDBProvider kvDBProvider;
+  final BlobDBProvider blobDBProvider;
   final T Function() actualFunction;
 
   ReplayBuffer(
     this.id, {
-    required this.dbProvider,
+    required this.kvDBProvider,
+    required this.blobDBProvider,
     required this.actualFunction,
   });
 
-  /// This method is to store values as-is in the Firestore database. Use this method
-  /// for primitive types and basic data structures such as Maps and Lists of primitive objects.
-  /// For user-defined classes, use the [getAndConvertFrom] method. A small caveat is that
-  /// any function call that utilises the [ReplayBuffer] methods must be `async` to allow
-  /// for DB operations to be performed.
+  Future<T?> getKVDBBuffer(String bufferId) async {
+    return await kvDBProvider.getById(bufferId, id);
+  }
+
+  Future<T?> getBlobBuffer(String bufferId) async {
+    final result = await blobDBProvider.get(bufferId);
+    if (result == null) return null;
+    return jsonDecode(utf8.decode(result));
+  }
+
+  /// This method is to store values in the Replay Buffer. Since the values themselves may be
+  /// too large for a key-value database, a [BlobDBProvider] is relied upon to store the data.
+  /// The path/reference/link to the blob is then stored by the [KeyValueDBProvider] for the
+  /// corresponding variable. Use this method for primitive types and basic data structures
+  /// such as Maps and Lists of primitive objects. For user-defined classes, use the [getAndConvertFrom]
+  /// method. A small caveat is that any function call that utilises the [ReplayBuffer] methods must be
+  /// `async` to allow for DB operations to be performed.
   Future<T> get() async {
     if (AutocloudProject.executionMode == ExecutionMode.debug) {
-      final KVDBObjectIdentityProvider bufferId =
-          KeyValueDBProvider.markhorReplayBuffersStore.appendField(id);
-      T? bufferedValue = await dbProvider.getById(bufferId);
-      if (bufferedValue == null) {
-        bufferedValue = actualFunction();
-        print('updating value');
-        await dbProvider.updateById(bufferId, bufferedValue);
+      final String bufferLoc = KeyValueDBProvider.markhorReplayBuffersStore;
+      // This might contain either the buffer value itself, or a blob reference, or nothing at all
+      final dynamic bufferRetrievalAttempt =
+          await kvDBProvider.getById(bufferLoc, id);
+      T? bufferedValue;
+      if (bufferRetrievalAttempt is String) {
+        if (T == String) {
+          bufferedValue = bufferRetrievalAttempt as T;
+        } else {
+          // Stored as a blob, whose path is stored by `bufferRetrievalAttempt`
+          bufferedValue = await getBlobBuffer(bufferRetrievalAttempt);
+        }
+      } else if (bufferRetrievalAttempt != null) {
+        // The buffer retrieval attempt was successful
+        bufferedValue = bufferRetrievalAttempt;
       } else {
-        print('fetching buffered value');
+        bool isTypeLargeObjType;
+        // Detect the type of the variable
+        if (T == String) {
+          isTypeLargeObjType = false;
+        } else if (T.toString().contains('Map') ||
+            T.toString().contains('List')) {
+          // This is pathetic comparison logic but we really need to move on from this issue
+          isTypeLargeObjType = true;
+        } else {
+          throw UnimplementedError();
+        }
+        // Update the appropriate type of DB with the new buffer value
+        bufferedValue = actualFunction();
+        if (isTypeLargeObjType) {
+          final String blobId = "$bufferLoc/$id";
+          await blobDBProvider.put(
+              blobId, utf8.encode(jsonEncode(bufferedValue)));
+          await kvDBProvider.updateById(bufferLoc, id, blobId);
+        } else {
+          await kvDBProvider.updateById(bufferLoc, id, bufferedValue);
+        }
       }
+
       return bufferedValue!;
     } else {
       return actualFunction();
@@ -44,14 +87,14 @@ class ReplayBuffer<T> {
     required S Function(T) convertToStorable,
   }) async {
     if (AutocloudProject.executionMode == ExecutionMode.debug) {
-      final KVDBObjectIdentityProvider bufferId =
-          KeyValueDBProvider.markhorReplayBuffersStore.appendField(id);
-      S? bufferedValue = await dbProvider.getById(bufferId);
+      final String bufferLoc = KeyValueDBProvider.markhorReplayBuffersStore;
+
+      S? bufferedValue = await kvDBProvider.getById(bufferLoc, id);
       T finalValue;
       if (bufferedValue == null) {
         finalValue = actualFunction();
         bufferedValue = convertToStorable(finalValue);
-        await dbProvider.updateById(bufferId, bufferedValue);
+        await kvDBProvider.updateById(bufferLoc, id, bufferedValue);
       } else {
         finalValue = convertToNative(bufferedValue);
       }
