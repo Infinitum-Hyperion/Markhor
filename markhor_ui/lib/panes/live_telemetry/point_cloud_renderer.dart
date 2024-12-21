@@ -17,17 +17,24 @@ class PointCloudRendererPane extends StatefulWidget {
 
 class PointCloudRendererPaneState extends State<PointCloudRendererPane>
     with PaneStyling {
-  final DiTreDiController controller = DiTreDiController()..userScale = 10;
+  double vs = 0, ms = 0, us = 0;
+  late final DiTreDiController controller;
 
   @override
   void initState() {
+    controller = DiTreDiController()
+      ..userScale = 10
+      ..rotationX = -90
+      ..rotationY = 360
+      ..rotationZ = 90
+      ..userScale = 4;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return paneStyle(
-      title: 'Point Cloud',
+      title: 'Point Cloud ($vs, $ms, $us)',
       primaryColor: ACPColor.purple,
       width: widget.width,
       child: StreamBuilder(
@@ -39,6 +46,7 @@ class PointCloudRendererPaneState extends State<PointCloudRendererPane>
                 child: DiTreDiDraggable(
                   controller: controller,
                   child: DiTreDi(
+                    controller: controller,
                     figures: [
                       for (final point in snapshot.data!)
                         Point3D(
