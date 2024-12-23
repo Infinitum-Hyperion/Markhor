@@ -10,12 +10,14 @@ class ReplayBuffer<T> {
   final KeyValueDBProvider kvDBProvider;
   final BlobDBProvider blobDBProvider;
   final T Function() actualFunction;
+  final bool enabled;
 
   ReplayBuffer(
     this.id, {
     required this.kvDBProvider,
     required this.blobDBProvider,
     required this.actualFunction,
+    required this.enabled,
   });
 
   Future<T?> getKVDBBuffer(String bufferId) async {
@@ -36,7 +38,7 @@ class ReplayBuffer<T> {
   /// method. A small caveat is that any function call that utilises the [ReplayBuffer] methods must be
   /// `async` to allow for DB operations to be performed.
   Future<T> get() async {
-    if (AutocloudProject.executionMode == ExecutionMode.debug) {
+    if (AutocloudProject.executionMode == ExecutionMode.debug && enabled) {
       final String bufferLoc = KeyValueDBProvider.markhorReplayBuffersStore;
       // This might contain either the buffer value itself, or a blob reference, or nothing at all
       final dynamic bufferRetrievalAttempt =
