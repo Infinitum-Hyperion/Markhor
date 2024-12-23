@@ -12,17 +12,41 @@ class LightweightCommunicationBridgeForwarder {
     int receptionPort = 8080,
     int forwardingPort = 8081,
   }) async {
-    (await HttpServer.bind('localhost', receptionPort)).listen((request) async {
+    print('initialising');
+    (await HttpServer.bind('0.0.0.0', receptionPort)).listen((request) async {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
+        print('received upgrade request');
         receptionSocket = await WebSocketTransformer.upgrade(request);
-        receptionSocket!.listen(forwardingSocket?.add);
+        print('listening');
+        receptionSocket!.listen(
+          forwardingSocket?.add,
+          onError: (e, st) {
+            print(e);
+            print(st);
+          },
+          onDone: () => print('client disconnected'),
+        );
+      } else {
+        print('bad request');
+        request.response.statusCode = HttpStatus.badRequest;
+        await request.response.close();
       }
     });
-    (await HttpServer.bind('localhost', forwardingPort))
-        .listen((request) async {
+    (await HttpServer.bind('0.0.0.0', forwardingPort)).listen((request) async {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         forwardingSocket = await WebSocketTransformer.upgrade(request);
-        forwardingSocket!.listen(receptionSocket?.add);
+        forwardingSocket!.listen(
+          receptionSocket?.add,
+          onError: (e, st) {
+            print(e);
+            print(st);
+          },
+          onDone: () => print('client disconnected'),
+        );
+      } else {
+        print('bad request');
+        request.response.statusCode = HttpStatus.badRequest;
+        await request.response.close();
       }
     });
   }
