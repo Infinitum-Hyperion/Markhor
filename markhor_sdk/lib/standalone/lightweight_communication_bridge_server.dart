@@ -12,19 +12,21 @@ class LightweightCommunicationBridgeForwarder {
     int receptionPort = 8080,
     int forwardingPort = 8081,
   }) async {
-    print('initialising');
+    print('Initialising target->system forwarder');
     (await HttpServer.bind('0.0.0.0', receptionPort)).listen((request) async {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
-        print('received upgrade request');
         receptionSocket = await WebSocketTransformer.upgrade(request);
-        print('listening');
+        print('TSF Listening');
         receptionSocket!.listen(
-          forwardingSocket?.add,
+          (data) {
+            print('Forwarding from target to system');
+            forwardingSocket?.add(data);
+          },
           onError: (e, st) {
             print(e);
             print(st);
           },
-          onDone: () => print('client disconnected'),
+          onDone: () => print('Target disconnected'),
         );
       } else {
         print('bad request');
@@ -32,16 +34,21 @@ class LightweightCommunicationBridgeForwarder {
         await request.response.close();
       }
     });
+    print('Initialising system->target forwarder');
     (await HttpServer.bind('0.0.0.0', forwardingPort)).listen((request) async {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         forwardingSocket = await WebSocketTransformer.upgrade(request);
+        print('STF Listening');
         forwardingSocket!.listen(
-          receptionSocket?.add,
+          (data) {
+            print('Forwarding from system to target');
+            receptionSocket?.add(data);
+          },
           onError: (e, st) {
             print(e);
             print(st);
           },
-          onDone: () => print('client disconnected'),
+          onDone: () => print('System disconnected'),
         );
       } else {
         print('bad request');
