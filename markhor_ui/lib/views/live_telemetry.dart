@@ -1,7 +1,7 @@
 part of autocloud.markhor;
 
 class MarkhorLiveTelemetryView extends StatefulWidget {
-  final Map<String, WidgetBuilder> viewModes;
+  final Map<String, Function> viewModes;
 
   const MarkhorLiveTelemetryView({
     this.viewModes = const {},
@@ -30,7 +30,15 @@ class MarkhorLiveTelemetryViewState
 
   @override
   void initState() {
-    viewModes = {'super': superViewMode}..addAll(widget.viewModes);
+    // This mapping is hacky, but required in order to decouple autocloud_sdk from Flutter-specific
+    // dependencies so that it can be imported into Dart CLI scripts.
+    viewModes = {'super': superViewMode}
+      ..addAll(widget.viewModes.map((key, fn) => MapEntry(
+            key,
+            (BuildContext context) {
+              return fn(context) as Widget;
+            },
+          )));
     super.initState();
   }
 

@@ -1,16 +1,25 @@
-part of markhor.sdk;
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/status.dart' as WSStatus;
+import 'package:autocloud_sdk/autocloud_sdk.dart';
 
 class LCBClient {
   HtmlWebSocketChannel? socket;
   void initClient({
-    int port = 8081,
+    required String host,
+    required int port,
     required void Function(String) onMessage,
   }) async {
-    socket = HtmlWebSocketChannel.connect("ws://0.0.0.0:$port");
+    socket = HtmlWebSocketChannel.connect("ws://$host:$port");
     socket!.stream.listen((message) => onMessage(message));
   }
 
-  void send(String msg) => socket!.sink.add(msg);
+  void send({
+    required AutocloudArtifact destination,
+    required String payload,
+  }) {
+    socket!.sink.add("preflight:${destination.id}");
+    socket!.sink.add(payload);
+  }
 
   Future<void> closeServer() async {
     await socket?.sink.close(WSStatus.goingAway);
