@@ -13,3 +13,4 @@ dependencies:
   web_socket_channel: ^3.0.1
   autocloud_sdk:
     path: ../../autocloud/autocloud_sdk
+  opentelemetry: ^0.18.6
