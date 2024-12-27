@@ -49,41 +49,54 @@ class MarkhorLiveTelemetryViewState
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Live Telemetry',
-            style: ACPFont.viewTitle(
-              const TextStyle(color: ACPColor.purple),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12,
+              top: 12,
+            ),
+            child: Text(
+              'Live Telemetry',
+              style: ACPFont.viewTitle(
+                const TextStyle(color: ACPColor.purple),
+              ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(width: 20),
-              SizedBox(
-                width: 130,
-                height: 80,
-                child: DropdownButtonFormField<String>(
-                  items: [
-                    for (final viewMode in viewModes.keys)
-                      DropdownMenuItem(
-                        value: viewMode,
-                        child: Text(viewMode),
-                      ),
-                  ],
-                  onChanged: (newMode) {
-                    setState(() {
-                      if (newMode != null) currentViewMode = newMode;
-                    });
-                  },
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12,
+              top: 12,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(width: 20),
+                SizedBox(
+                  width: 130,
+                  height: 60,
+                  child: DropdownButtonFormField<String>(
+                    items: [
+                      for (final viewMode in viewModes.keys)
+                        DropdownMenuItem(
+                          value: viewMode,
+                          child: Text(viewMode),
+                        ),
+                    ],
+                    onChanged: (newMode) {
+                      setState(() {
+                        if (newMode != null) currentViewMode = newMode;
+                      });
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(height: 12),
           SizedBox(
             width:
                 MediaQuery.of(context).size.width - CONST.navigationRailWidth,
-            height: 600,
+            height: 575,
             child: viewModes[currentViewMode]!(context),
           ),
         ],
